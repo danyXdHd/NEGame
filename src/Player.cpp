@@ -58,15 +58,23 @@ void Player::LoadTextures() {
 	gunSprite.setOrigin(sf::Vector2f(width / 4, width / 4));
 }
 
+bool Player::IsColliding(int wX, int wY, int wW, int wH) const
+{
+	return (x          < wX + wW &&
+			x + width  > wX &&
+			y          < wY + wH &&
+			y + height > wY);
+}
+
 void Player::HandleMovement(std::vector<Wall> Walls) {
 	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 		x -= speed;
 		for (int i = 0; i < Walls.size(); i++) {
-			if ((x < Walls[i].x * Walls[i].TextureWidth + Walls[i].width * Walls[i].TextureWidth &&
-				x + width > Walls[i].x * Walls[i].TextureWidth &&
-				y < Walls[i].y * Walls[i].TextureHeight + Walls[i].height * Walls[i].TextureHeight &&
-				y + height > Walls[i].y * Walls[i].TextureHeight)) {
+			if (IsColliding(Walls[i].x * Walls[i].TextureWidth,
+							Walls[i].y * Walls[i].TextureHeight,
+							Walls[i].width * Walls[i].TextureWidth,
+							Walls[i].height * Walls[i].TextureHeight)) {
 				// Atingem peretele, ajustăm poziția
 				x = Walls[i].x * Walls[i].TextureWidth + Walls[i].width * Walls[i].TextureWidth;
 				break;
@@ -77,10 +85,10 @@ void Player::HandleMovement(std::vector<Wall> Walls) {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
 		x += speed;
 		for (int i = 0; i < Walls.size(); i++) {
-			if ((x < Walls[i].x * Walls[i].TextureWidth + Walls[i].width * Walls[i].TextureWidth &&
-				x + width > Walls[i].x * Walls[i].TextureWidth &&
-				y < Walls[i].y * Walls[i].TextureHeight + Walls[i].height * Walls[i].TextureHeight &&
-				y + height > Walls[i].y * Walls[i].TextureHeight)) {
+			if (IsColliding(Walls[i].x * Walls[i].TextureWidth,
+							Walls[i].y * Walls[i].TextureHeight,
+							Walls[i].width * Walls[i].TextureWidth,
+							Walls[i].height * Walls[i].TextureHeight)) {
 				// Atingem peretele, ajustăm poziția
 				x = Walls[i].x * Walls[i].TextureWidth - width;
 				break;
@@ -91,10 +99,10 @@ void Player::HandleMovement(std::vector<Wall> Walls) {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 		y -= speed;
 		for (int i = 0; i < Walls.size(); i++) {
-			if ((x < Walls[i].x * Walls[i].TextureWidth + Walls[i].width * Walls[i].TextureWidth &&
-				x + width > Walls[i].x * Walls[i].TextureWidth &&
-				y < Walls[i].y * Walls[i].TextureHeight + Walls[i].height * Walls[i].TextureHeight &&
-				y + height > Walls[i].y * Walls[i].TextureHeight)) {
+			if (IsColliding(Walls[i].x * Walls[i].TextureWidth,
+							Walls[i].y * Walls[i].TextureHeight,
+							Walls[i].width * Walls[i].TextureWidth,
+							Walls[i].height * Walls[i].TextureHeight)) {
 				// Atingem peretele, ajustăm poziția
 				y = Walls[i].y * Walls[i].TextureHeight + Walls[i].height * Walls[i].TextureHeight;
 				break;
@@ -105,10 +113,10 @@ void Player::HandleMovement(std::vector<Wall> Walls) {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 		y += speed;
 		for (int i = 0; i < Walls.size(); i++) {
-			if ((x < Walls[i].x * Walls[i].TextureWidth + Walls[i].width * Walls[i].TextureWidth &&
-				x + width > Walls[i].x * Walls[i].TextureWidth &&
-				y < Walls[i].y * Walls[i].TextureHeight + Walls[i].height * Walls[i].TextureHeight &&
-				y + height > Walls[i].y * Walls[i].TextureHeight)) {
+			if (IsColliding(Walls[i].x * Walls[i].TextureWidth,
+							Walls[i].y * Walls[i].TextureHeight,
+							Walls[i].width * Walls[i].TextureWidth,
+							Walls[i].height * Walls[i].TextureHeight)) {
 				// Atingem peretele, ajustăm poziția
 				y = Walls[i].y * Walls[i].TextureHeight - height;
 				break;
@@ -151,9 +159,6 @@ void Player::HandleBullets(sf::RenderWindow& Window, int width, int height, std:
 		delayBullet--;
 	
 	for (int i = 0; i < Bullets.size(); i++) {
-		Window.draw(Bullets[i].corner1);
-		Window.draw(Bullets[i].corner2);
-		Window.draw(Bullets[i].corner3);
 		if (!Bullets[i].Update(x, y, width, height, Walls))
 		{
 			bulletSprite.setPosition(Bullets[i].x, Bullets[i].y);

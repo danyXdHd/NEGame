@@ -21,7 +21,7 @@ int Bullet::Update(int px, int py, int w, int h, std::vector<Wall> Walls)
 	corner3.setFillColor(sf::Color(0, 0, 255));
 
 	bool ok = false;
-	for (int i = 0; i < Walls.size(); i++)
+	/*for (int i = 0; i < Walls.size(); i++)
 		if ((x < (Walls[i].x + Walls[i].width) * Walls[i].TextureWidth &&
 			x > Walls[i].x * Walls[i].TextureWidth &&
 			y < (Walls[i].y + Walls[i].height) * Walls[i].TextureWidth &&
@@ -46,7 +46,7 @@ int Bullet::Update(int px, int py, int w, int h, std::vector<Wall> Walls)
 		{
 			ok = true;
 			break;
-		}
+		}*/
 
 	if (x < -w/2 + px + 32 || x > w/2 + px + 32 ||
 		y < -h/2 + py + 32 || y > h/2 + py + 32 || ok)

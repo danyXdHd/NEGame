@@ -27,6 +27,8 @@ private:
 
 	void HandleGun(sf::RenderWindow& Window);
 
+	bool IsColliding(int wX, int wY, int wW, int wH) const;
+
 
 public:
 	sf::Sprite sprite;

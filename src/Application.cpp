@@ -13,11 +13,11 @@ int Application::Start()
     View.setCenter(sf::Vector2f(0, 0));
 
     Window.create(sf::VideoMode(width, height), "SFML Application");
-    Window.setFramerateLimit(60);
+    Window.setFramerateLimit(100);
     Window.setView(View);
         
     Player.Start();
-    Scene.Start();
+    Scene.Start("Scene1");
 
     while (Window.isOpen())
     {
@@ -36,6 +36,11 @@ void Application::Update()
             Window.close();
     }
 
+    /*if (Timer == 450) {
+        std::cout << "Hello";
+        ChangeScene("Scene2");
+    }
+    Timer++;*/
 
     // Clear the window
     Window.clear(sf::Color(10, 160, 210));
@@ -48,3 +53,7 @@ void Application::Update()
     Window.display();
 }
 
+void Application::ChangeScene(std::string name)
+{
+    Scene.Start("Scene2");
+}

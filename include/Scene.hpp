@@ -20,10 +20,13 @@ public:
 
 	std::vector<Wall> Walls;
 
-	void Start();
+	std::vector<Wall> EnemySAreas;
 
+	std::vector<Wall> LootSAreas;
+
+	std::vector<std::pair<Wall, int>> Doors;
+
+	void Start(std::string name);
 	void Update(sf::RenderWindow& Window);
-
-	void ChangeScene(std::string newSceneName);
 	
 };

@@ -13,6 +13,6 @@ public:
 
 	sf::Texture texture;
 
-	sf::Sprite sprite;
+	sf::RectangleShape sprite;
 
 };
