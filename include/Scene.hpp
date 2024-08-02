@@ -27,6 +27,7 @@ public:
 	std::vector<std::pair<Wall, int>> Doors;
 
 	void Start(std::string name);
-	void Update(sf::RenderWindow& Window);
+	bool Update(sf::RenderWindow& Window,
+		float& x, float& y, int& width, int& height);
 	
 };

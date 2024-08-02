@@ -12,22 +12,21 @@ private:
 	sf::Texture gunTexture;
 	sf::Texture bulletTexture;
 
-	int width;
-	int height;
 	int speed;
 	int maxBullets;
-	int delayBullet;
-	int maxDelayBullet;
+	float delayBullet;
+	float maxDelayBullet;
+
 
 	void LoadTextures();
 
-	void HandleMovement(std::vector<Wall> Walls);
+	void HandleMovement(std::vector<Wall>& Walls, float dTime);
 
-	void HandleBullets(sf::RenderWindow& Window, int width, int height, std::vector<Wall> Walls);
+	void HandleBullets(sf::RenderWindow& Window, 
+		int width, int height, float dTime, 
+		std::vector<Wall>& Walls);
 
 	void HandleGun(sf::RenderWindow& Window);
-
-	bool IsColliding(int wX, int wY, int wW, int wH) const;
 
 
 public:
@@ -37,14 +36,15 @@ public:
 
 	double gunAngle;
 
-	int x, y;
+	int width;
+	int height;
+	float x, y;
 
 	std::vector<Bullet> Bullets;
-
-	sf::Sprite bulletSprite;
 
 	void Start();
 
 	void Update(sf::RenderWindow &Window, sf::View View, 
-		int width, int height, std::vector<Wall> Walls);
+		int width, int height, float dTime, 
+		std::vector<Wall>& Walls);
 };

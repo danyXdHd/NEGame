@@ -1,66 +1,91 @@
 #include "Bullet.hpp"
 
-int Bullet::Update(int px, int py, int w, int h, std::vector<Wall> Walls)
+Bullet::Bullet(int xx, int yy, float aangle)
 {
-	std::pair<double, double> newPos =  calculatePointInDirection(x, y, angle, speed);
-	x = newPos.first;
-	y = newPos.second;
+	const double PI = 3.14159265358979323846;
+	x = xx;
+	y = yy;
+	width = 38;
+	height = 15;
+	speed = 64 * 14;
+	angle = aangle;
 
-	corner1.setSize(sf::Vector2f(16, 16));
-	corner1.setPosition(x + width * cos(angle * PI / 180), y);
-	corner1.setFillColor(sf::Color(255, 0, 0));
+	std::pair<double, double> newPos = calculatePointInDirection(x, y, angle, speed);
+	dx = newPos.first - x;
+	dy = newPos.second - y;
+
+	sinc = sin(angle / 180 * PI);
+	cosc = cos(angle / 180 * PI);
+
+	WTF0.setFillColor(sf::Color::Transparent);
+	WTF0.setOutlineColor(sf::Color::Black);
+	WTF0.setOutlineThickness(3);
+	WTF0.setSize(sf::Vector2f(4,4));
+
+	WTF1.setFillColor(sf::Color::Transparent);
+	WTF1.setOutlineColor(sf::Color::Magenta);
+	WTF1.setOutlineThickness(3);
+	WTF1.setSize(sf::Vector2f(4, 4));
+
+	WTF2.setFillColor(sf::Color::Transparent);
+	WTF2.setOutlineColor(sf::Color::Magenta);
+	WTF2.setOutlineThickness(3);
+	WTF2.setSize(sf::Vector2f(4, 4));
+
+	WTF3.setFillColor(sf::Color::Transparent);
+	WTF3.setOutlineColor(sf::Color::Magenta);
+	WTF3.setOutlineThickness(3);
+	WTF3.setSize(sf::Vector2f(4, 4));
+}
 
 
-	corner1.setSize(sf::Vector2f(16, 16));
-	corner2.setPosition(x, y + height * sin(angle * PI / 180));
-	corner2.setFillColor(sf::Color(0, 255, 0));
-
-
-	corner1.setSize(sf::Vector2f(16, 16));
-	corner3.setPosition(x + width * cos(angle * PI / 180), y + height * sin(angle * PI / 180));
-	corner3.setFillColor(sf::Color(0, 0, 255));
-
+bool Bullet::Update(int px, int py, int w, int h, float dTime, std::vector<Wall>& Walls)
+{
+	x += dx * dTime;
+	y += dy * dTime;
+	
 	bool ok = false;
-	/*for (int i = 0; i < Walls.size(); i++)
+
+	const double PI = 3.14159265358979323846;
+	for (int i = 0; i < Walls.size(); i++)
 		if ((x < (Walls[i].x + Walls[i].width) * Walls[i].TextureWidth &&
-			x > Walls[i].x * Walls[i].TextureWidth &&
-			y < (Walls[i].y + Walls[i].height) * Walls[i].TextureWidth &&
-			y > Walls[i].y * Walls[i].TextureWidth) ||
+			 x >  Walls[i].x * Walls[i].TextureWidth &&
+			 y < (Walls[i].y + Walls[i].height) * Walls[i].TextureWidth &&
+			 y >  Walls[i].y * Walls[i].TextureWidth) ||
 
-			(x + width * cos(angle * PI / 180) < (Walls[i].x + Walls[i].width) * Walls[i].TextureWidth &&
-			x + width * cos(angle * PI / 180) > Walls[i].x * Walls[i].TextureWidth &&
-			y < (Walls[i].y + Walls[i].height) * Walls[i].TextureWidth &&
-			y > Walls[i].y * Walls[i].TextureWidth) ||
+			(x + width * cosc < (Walls[i].x + Walls[i].width) * Walls[i].TextureWidth &&
+			 x + width * cosc >  Walls[i].x * Walls[i].TextureWidth &&
+			 y + width * sinc < (Walls[i].y + Walls[i].height) * Walls[i].TextureWidth &&
+			 y + width * sinc >  Walls[i].y * Walls[i].TextureWidth) ||
 
-			(x < (Walls[i].x + Walls[i].width) * Walls[i].TextureWidth &&
-			x > Walls[i].x * Walls[i].TextureWidth &&
-			y + height * sin(angle * PI / 180) < (Walls[i].y + Walls[i].height) * Walls[i].TextureWidth &&
-			y + height * sin(angle * PI / 180) > Walls[i].y * Walls[i].TextureWidth) ||
+			(x - height * sinc < (Walls[i].x + Walls[i].width) * Walls[i].TextureWidth &&
+			 x - height * sinc >  Walls[i].x * Walls[i].TextureWidth &&
+			 y + height * cosc < (Walls[i].y + Walls[i].height) * Walls[i].TextureWidth &&
+			 y + height * cosc >  Walls[i].y * Walls[i].TextureWidth) ||
 
-			(x + width * cos(angle * PI / 180) < (Walls[i].x + Walls[i].width) * Walls[i].TextureWidth &&
-			x + width * cos(angle * PI / 180) > Walls[i].x * Walls[i].TextureWidth &&
-			y + height * sin(angle * PI / 180) < (Walls[i].y + Walls[i].height) * Walls[i].TextureWidth &&
-			y + height * sin(angle * PI / 180) > Walls[i].y * Walls[i].TextureWidth)
+			(x + width * cosc - height * sinc < (Walls[i].x + Walls[i].width) * Walls[i].TextureWidth &&
+			 x + width * cosc - height * sinc >  Walls[i].x * Walls[i].TextureWidth &&
+			 y + width * sinc + height * cosc < (Walls[i].y + Walls[i].height) * Walls[i].TextureWidth &&
+			 y + width * sinc + height * cosc >  Walls[i].y * Walls[i].TextureWidth)
 			)
 
 		{
 			ok = true;
 			break;
-		}*/
+		}
 
-	if (x < -w/2 + px + 32 || x > w/2 + px + 32 ||
-		y < -h/2 + py + 32 || y > h/2 + py + 32 || ok)
-		return 1;
+	sprite.setPosition(x, y);
+	WTF0.setPosition(x - 2, y - 2);
 
-	return 0;
-}
+	WTF1.setPosition(x - 2 + width*cosc,
+					 y - 2 + width*sinc);
 
-Bullet::Bullet(int xx, int yy, int aangle)
-{
-	x = xx;
-	y = yy;
-	angle = aangle;
-	width = 40;
-	height = 13;
-	speed = 20;
+	WTF2.setPosition(x - 2 - height*sinc, y - 2 + height*cosc);
+
+
+	WTF3.setPosition(x - 2 + width * cosc - height * sinc, 
+					 y - 2 + width * sinc + height * cosc);
+
+	return (x < -w / 2 + px + 32 || x > w / 2 + px + 32 ||
+			y < -h / 2 + py + 32 || y > h / 2 + py + 32 || ok);
 }

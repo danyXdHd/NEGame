@@ -3,23 +3,25 @@
 #include <vector>
 #include <Wall.hpp>
 
-const double PI = 3.14159265358979323846;
-
 class Bullet {
 private:
 
 public:
-	int x, y;
-	int angle;
-	int width, height;
+	float x, y;
+	float dx, dy;
+	float width, height;
 	int speed;
+	float angle;
 
+	float sinc, cosc;
 
-	sf::RectangleShape corner1;
-	sf::RectangleShape corner2;
-	sf::RectangleShape corner3;
+	sf::Sprite sprite;
+	sf::RectangleShape WTF0;
+	sf::RectangleShape WTF1;
+	sf::RectangleShape WTF2;
+	sf::RectangleShape WTF3;
 
-	int Update(int px, int py, int w, int h, std::vector<Wall> Walls);
+	bool Update(int px, int py, int w, int h, float dTime, std::vector<Wall>& Walls);
 
-	Bullet(int xx, int yy, int aangle);
+	Bullet(int xx, int yy, float aangle);
 };

@@ -5,8 +5,8 @@ class Wall {
 private:
 
 public:
-	float x, y,
-		width, height;
+	int x, y;
+	int width, height;
 
 	int TextureWidth=64;
 	int TextureHeight=64;
@@ -15,4 +15,5 @@ public:
 
 	sf::RectangleShape sprite;
 
+	bool isColiding(int xx, int yy, int ww, int hh) const;
 };

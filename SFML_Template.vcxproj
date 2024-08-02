@@ -112,6 +112,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -129,6 +130,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -146,6 +148,7 @@
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Utility.cpp" />
+    <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Bullet.hpp" />
@@ -154,6 +157,21 @@
     <ClInclude Include="include\Utility.hpp" />
     <ClInclude Include="include\Scene.hpp" />
     <ClInclude Include="include\Wall.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Assets\Fonts\Inter-Medium.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Images\Bullet - Copy (2).png" />
+    <Image Include="Assets\Images\Bullet.png" />
+    <Image Include="Assets\Images\Gun.png" />
+    <Image Include="Assets\Images\Player.png" />
+    <Image Include="Assets\Images\RedBox.png" />
+    <Image Include="Assets\Images\Tile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Images\RedBox.png~" />
+    <None Include="Assets\Images\Tile.png~" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

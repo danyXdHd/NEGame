@@ -1,26 +1,26 @@
-﻿
-#include <Player.hpp>
-#include <Utility.hpp>
-#include <vector>
+﻿#include <Player.hpp>
 
 void Player::Start() {
 	width = 60;
 	height = 60;
 	x = 0;
 	y = 0;
-	speed = 5;
+	speed = 64 * 5;
 	gunAngle = 0;
 	maxBullets = 20;
 	delayBullet = 0;
-	maxDelayBullet = 20;
+	maxDelayBullet = .2;
+
 	
 	LoadTextures();
 }
 
 void Player::Update(sf::RenderWindow& Window, sf::View View, 
-					int width, int height, std::vector<Wall> Walls) {
+					int width, int height, float dTime, 
+					std::vector<Wall>& Walls) {
 	// Handle player movement
-	HandleMovement(Walls);
+	
+	HandleMovement(Walls, dTime);
 
 	// Handle gun rotation
 	HandleGun(Window);
@@ -32,7 +32,7 @@ void Player::Update(sf::RenderWindow& Window, sf::View View,
 	Window.setView(View);
 
 	// Handle bullets
-	HandleBullets(Window, width, height, Walls);
+	HandleBullets(Window, width, height, dTime, Walls);
 
 }
 
@@ -53,28 +53,16 @@ void Player::LoadTextures() {
 	sprite.setTexture(texture);
 	sprite.setScale(0.5, 0.5);
 	gunSprite.setTexture(gunTexture);
-	bulletSprite.setTexture(bulletTexture);
 
 	gunSprite.setOrigin(sf::Vector2f(width / 4, width / 4));
 }
 
-bool Player::IsColliding(int wX, int wY, int wW, int wH) const
-{
-	return (x          < wX + wW &&
-			x + width  > wX &&
-			y          < wY + wH &&
-			y + height > wY);
-}
-
-void Player::HandleMovement(std::vector<Wall> Walls) {
+void Player::HandleMovement(std::vector<Wall>& Walls, float dTime) {
 	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-		x -= speed;
+		x -= speed * dTime;
 		for (int i = 0; i < Walls.size(); i++) {
-			if (IsColliding(Walls[i].x * Walls[i].TextureWidth,
-							Walls[i].y * Walls[i].TextureHeight,
-							Walls[i].width * Walls[i].TextureWidth,
-							Walls[i].height * Walls[i].TextureHeight)) {
+			if (Walls[i].isColiding(x, y, width, height)) {
 				// Atingem peretele, ajustăm poziția
 				x = Walls[i].x * Walls[i].TextureWidth + Walls[i].width * Walls[i].TextureWidth;
 				break;
@@ -83,12 +71,9 @@ void Player::HandleMovement(std::vector<Wall> Walls) {
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-		x += speed;
+		x += speed * dTime;
 		for (int i = 0; i < Walls.size(); i++) {
-			if (IsColliding(Walls[i].x * Walls[i].TextureWidth,
-							Walls[i].y * Walls[i].TextureHeight,
-							Walls[i].width * Walls[i].TextureWidth,
-							Walls[i].height * Walls[i].TextureHeight)) {
+			if (Walls[i].isColiding(x, y, width, height)) {
 				// Atingem peretele, ajustăm poziția
 				x = Walls[i].x * Walls[i].TextureWidth - width;
 				break;
@@ -97,12 +82,9 @@ void Player::HandleMovement(std::vector<Wall> Walls) {
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-		y -= speed;
+		y -= speed * dTime;
 		for (int i = 0; i < Walls.size(); i++) {
-			if (IsColliding(Walls[i].x * Walls[i].TextureWidth,
-							Walls[i].y * Walls[i].TextureHeight,
-							Walls[i].width * Walls[i].TextureWidth,
-							Walls[i].height * Walls[i].TextureHeight)) {
+			if (Walls[i].isColiding(x, y, width, height)) {
 				// Atingem peretele, ajustăm poziția
 				y = Walls[i].y * Walls[i].TextureHeight + Walls[i].height * Walls[i].TextureHeight;
 				break;
@@ -111,12 +93,9 @@ void Player::HandleMovement(std::vector<Wall> Walls) {
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-		y += speed;
+		y += speed * dTime;
 		for (int i = 0; i < Walls.size(); i++) {
-			if (IsColliding(Walls[i].x * Walls[i].TextureWidth,
-							Walls[i].y * Walls[i].TextureHeight,
-							Walls[i].width * Walls[i].TextureWidth,
-							Walls[i].height * Walls[i].TextureHeight)) {
+			if (Walls[i].isColiding(x, y, width, height)) {
 				// Atingem peretele, ajustăm poziția
 				y = Walls[i].y * Walls[i].TextureHeight - height;
 				break;
@@ -126,8 +105,6 @@ void Player::HandleMovement(std::vector<Wall> Walls) {
 
 	// Actualizăm poziția jucătorului
 	sprite.setPosition(x, y);
-
-
 }
 
 void Player::HandleGun(sf::RenderWindow& Window) {
@@ -146,26 +123,28 @@ void Player::HandleGun(sf::RenderWindow& Window) {
 	gunSprite.setPosition(newPos.first, newPos.second);
 }
 
-void Player::HandleBullets(sf::RenderWindow& Window, int width, int height, std::vector<Wall> Walls)
+void Player::HandleBullets(sf::RenderWindow& Window, int width, int height, float dTime, std::vector<Wall>& Walls)
 {
-	if(Bullets.size() < maxBullets && delayBullet == 0)
+	if(Bullets.size() < maxBullets && delayBullet <= 0)
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-			Bullet newBullet(gunSprite.getPosition().x,
-							 gunSprite.getPosition().y, gunAngle);
+			Bullet newBullet(gunSprite.getPosition().x, gunSprite.getPosition().y,
+							 gunSprite.getRotation());
+
 			Player::Bullets.push_back(newBullet);
+			int i = Bullets.size() - 1;
+			//Bullets[i].sprite.setOrigin(sf::Vector2f(Bullets[i].width/2, Bullets[i].height/2));
+			Bullets[i].sprite.setRotation(gunSprite.getRotation());
+			Bullets[i].sprite.setTexture(bulletTexture);
+			Bullets[i].sprite.setPosition(Bullets[i].x, Bullets[i].y);
+
 			delayBullet = maxDelayBullet;
 		}
 	if (delayBullet > 0)
-		delayBullet--;
+		delayBullet -= dTime;
 	
 	for (int i = 0; i < Bullets.size(); i++) {
-		if (!Bullets[i].Update(x, y, width, height, Walls))
-		{
-			bulletSprite.setPosition(Bullets[i].x, Bullets[i].y);
-			bulletSprite.setRotation(Bullets[i].angle);
-			Window.draw(bulletSprite);
-		}
-		else
+		Window.draw(Bullets[i].sprite);
+		if (Bullets[i].Update(x, y, width, height, dTime, Walls))
 			Bullets.erase(Bullets.begin() + i);
 	}
 }

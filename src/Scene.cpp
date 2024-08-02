@@ -10,6 +10,9 @@ void Scene::Start(std::string name)
     sceneName = "json\\" + name + ".json";
 
     Walls.clear();
+    EnemySAreas.clear();
+    LootSAreas.clear();
+    Doors.clear();
 
     FILE* file;
     errno_t err = fopen_s(&file, sceneName.c_str(), "r");
@@ -136,12 +139,21 @@ void Scene::Start(std::string name)
     }
 }
 
-void Scene::Update(sf::RenderWindow& Window)
+bool Scene::Update(sf::RenderWindow& Window,
+    float& x, float& y, int& width, int& height)
 {
+    bool loadNextScene = false;
+
     for (int i = 0; i < Walls.size(); i++) {
         Window.draw(Walls[i].sprite);
     }
     for (int i = 0; i < Doors.size(); i++) {
+        if (Doors[i].first.isColiding(x, y, width, height)) {
+            loadNextScene = true;
+        }
+
         Window.draw(Doors[i].first.sprite);
     }
+
+    return loadNextScene;
 }

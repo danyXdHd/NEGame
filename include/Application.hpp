@@ -15,7 +15,10 @@ private:
 
 	int height, width;
 
-	//int Timer=0;
+	int Count=0;
+	sf::Clock clock;
+	sf::Time deltaTime;
+	double s = 0;
 
 
 public:

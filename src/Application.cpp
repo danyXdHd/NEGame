@@ -36,18 +36,23 @@ void Application::Update()
             Window.close();
     }
 
-    /*if (Timer == 450) {
-        std::cout << "Hello";
-        ChangeScene("Scene2");
+    deltaTime = clock.restart();
+    s += deltaTime.asSeconds();
+    Count++;
+    if (s > 0.5) {
+        std::cout << "FPS: " << 1 / s * Count<< "  DeltaTime:" << deltaTime.asSeconds() << "\n";
+        s = 0;
+        Count = 0;
     }
-    Timer++;*/
 
     // Clear the window
     Window.clear(sf::Color(10, 160, 210));
 
-    // Draw and update Objects
-    Scene.Update(Window);
-    Player.Update(Window, View, width, height, Scene.Walls);
+    // Draw and update Objects(
+    if (Scene.Update(Window, Player.x, Player.y, Player.width, Player.height)) {
+        Scene.Start("Scene2");
+    }
+    Player.Update(Window, View, width, height, deltaTime.asSeconds(), Scene.Walls);
 
     // Display the window
     Window.display();
