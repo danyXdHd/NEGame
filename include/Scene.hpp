@@ -1,10 +1,11 @@
 #pragma once
+#include <iostream>
+#include <String>
+#include "SFML\Graphics.hpp"
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
-#include <Wall.hpp>
-#include <iostream>
-#include <SFML\Graphics.hpp>
-#include <String>
+#include "Wall.hpp"
+#include "Enemy.h"
 
 
 using namespace rapidjson;
@@ -12,6 +13,14 @@ using namespace rapidjson;
 class Scene {
 private:
 	Document Layout;
+
+	int count = 0;
+
+	void LoadTexture();
+
+	sf::Texture enemyTexture;
+	sf::Texture gunTexture;
+	sf::Texture bulletTexture;
 
 public:
 	Scene();
@@ -24,10 +33,14 @@ public:
 
 	std::vector<Wall> LootSAreas;
 
-	std::vector<std::pair<Wall, int>> Doors;
+	std::vector<Door> Doors;
+
+	std::vector<Enemy> Enemys;
 
 	void Start(std::string name);
 	bool Update(sf::RenderWindow& Window,
-		float& x, float& y, int& width, int& height);
+		float& x, float& y, int& width, int& height, float dTime);
 	
+	void SpawnEnemy(float ex, float ey);
+
 };

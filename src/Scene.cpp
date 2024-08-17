@@ -1,18 +1,37 @@
 ﻿#include "Scene.hpp"
 #define _CRT_SECURE_NO_WARNINGS
 
+void Scene::LoadTexture()
+{
+    if (!enemyTexture.loadFromFile("Assets\\Images\\Enemy.png"))
+    {
+        std::cout << "Enemy texture not rendered";
+    }
+    if (!gunTexture.loadFromFile("Assets\\Images\\Gun.png"))
+    {
+        std::cout << "Gun texture not rendered";
+    }
+    if (!bulletTexture.loadFromFile("Assets\\Images\\Bullet.png"))
+    {
+        std::cout << "Bullet texture not rendered";
+    }
+}
+
 Scene::Scene()
 {
 }
 
 void Scene::Start(std::string name)
 {
+    LoadTexture();
+
     sceneName = "json\\" + name + ".json";
 
     Walls.clear();
     EnemySAreas.clear();
     LootSAreas.clear();
     Doors.clear();
+    Enemys.clear();
 
     FILE* file;
     errno_t err = fopen_s(&file, sceneName.c_str(), "r");
@@ -115,7 +134,7 @@ void Scene::Start(std::string name)
             std::cerr << "Invalid door format in JSON file: " << sceneName.c_str() << std::endl;
         }
 
-        Wall w;
+        Door w;
 
         w.x = door["x"].GetInt();
         w.y = door["y"].GetInt();
@@ -127,11 +146,11 @@ void Scene::Start(std::string name)
             std::cout << "Door nuber: " << i << "`s texture not rendered ";
         }*/
 
-        Doors.push_back(std::make_pair(w, door["doorLocation"].GetInt()));
+        Doors.push_back(w);
 
-        Doors[Doors.size()-1].first.sprite.setPosition(sf::Vector2f(w.x * 64, w.y * 64));
-        Doors[Doors.size() - 1].first.sprite.setSize(sf::Vector2f(w.width * 64, w.height * 64));
-        Doors[Doors.size() - 1].first.sprite.setFillColor(sf::Color(15, 15, 15));
+        Doors[Doors.size()-1].sprite.setPosition(sf::Vector2f(w.x * 64, w.y * 64));
+        Doors[Doors.size() - 1].sprite.setSize(sf::Vector2f(w.width * 64, w.height * 64));
+        Doors[Doors.size() - 1].sprite.setFillColor(sf::Color(15, 15, 15));
     }
 
     for (int i = 0; i < Walls.size(); i++) {
@@ -140,20 +159,40 @@ void Scene::Start(std::string name)
 }
 
 bool Scene::Update(sf::RenderWindow& Window,
-    float& x, float& y, int& width, int& height)
+    float& x, float& y, int& width, int& height, float dTime)
 {
+    // x,y,width,height is from the player
     bool loadNextScene = false;
+
+    if (count >= 60 && sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+        SpawnEnemy(0,0);
+        count = 0;
+    }
+    count++;
 
     for (int i = 0; i < Walls.size(); i++) {
         Window.draw(Walls[i].sprite);
     }
     for (int i = 0; i < Doors.size(); i++) {
-        if (Doors[i].first.isColiding(x, y, width, height)) {
+        if (Doors[i].isColiding(x, y, width, height)) {
             loadNextScene = true;
         }
-
-        Window.draw(Doors[i].first.sprite);
+        Window.draw(Doors[i].sprite);
+    }
+    for (int i = 0; i < Enemys.size(); i++) {
+        Enemys[i].Update(Walls, x, y, width, height, dTime);
+        Window.draw(Enemys[i].sprite);
     }
 
     return loadNextScene;
+}
+
+void Scene::SpawnEnemy(float ex, float ey)
+{
+    Enemy e;
+    int i = Enemys.size();
+    Enemys.push_back(e);
+    Enemys[i].Start(ex, ey);
+    Enemys[i].sprite.setTexture(enemyTexture);
+    Enemys[i].sprite.setPosition(ex, ey);
 }

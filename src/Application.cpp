@@ -13,7 +13,7 @@ int Application::Start()
     View.setCenter(sf::Vector2f(0, 0));
 
     Window.create(sf::VideoMode(width, height), "SFML Application");
-    Window.setFramerateLimit(100);
+    //Window.setFramerateLimit(100);
     Window.setView(View);
         
     Player.Start();
@@ -49,7 +49,7 @@ void Application::Update()
     Window.clear(sf::Color(10, 160, 210));
 
     // Draw and update Objects(
-    if (Scene.Update(Window, Player.x, Player.y, Player.width, Player.height)) {
+    if (Scene.Update(Window, Player.x, Player.y, Player.width, Player.height,deltaTime.asSeconds())) {
         Scene.Start("Scene2");
     }
     Player.Update(Window, View, width, height, deltaTime.asSeconds(), Scene.Walls);

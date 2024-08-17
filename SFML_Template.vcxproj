@@ -142,15 +142,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Enemy.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\Bullet.cpp" />
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Utility.cpp" />
-    <ClCompile Include="Wall.cpp" />
+    <ClCompile Include="src\Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Enemy.h" />
     <ClInclude Include="include\Bullet.hpp" />
     <ClInclude Include="include\Application.hpp" />
     <ClInclude Include="include\Player.hpp" />
