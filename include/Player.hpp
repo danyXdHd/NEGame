@@ -1,9 +1,11 @@
 #pragma once
-#include <Bullet.hpp>
 #include <iostream>
-#include <SFML/Graphics.hpp>
-#include <Wall.hpp>
 #include <vector>
+#include "SFML/Graphics.hpp"
+#include "Gun.hpp"
+#include "Enemy.hpp"
+#include "Bullet.hpp"
+#include "Wall.hpp"
 
 class Player
 {
@@ -15,8 +17,8 @@ private:
 	int speed;
 	int maxBullets;
 	float delayBullet;
-	float maxDelayBullet;
 
+	Gun Gun;
 
 	void LoadTextures();
 
@@ -28,23 +30,22 @@ private:
 
 	void HandleGun(sf::RenderWindow& Window);
 
+	void HandleDamage(std::vector<Enemy> &Enemys);
 
 public:
 	sf::Sprite sprite;
 
-	sf::Sprite gunSprite;
-
-	double gunAngle;
-
 	int width;
 	int height;
 	float x, y;
+	
+	int hp;
 
 	std::vector<Bullet> Bullets;
 
 	void Start();
 
-	void Update(sf::RenderWindow &Window, sf::View View, 
+	void Update(sf::RenderWindow &Window, sf::View &View, 
 		int width, int height, float dTime, 
-		std::vector<Wall>& Walls);
+		std::vector<Wall>& Walls, std::vector<Enemy> &Enemys);
 };

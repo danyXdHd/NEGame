@@ -5,7 +5,7 @@
 #include "rapidjson/document.h"
 #include "rapidjson/filereadstream.h"
 #include "Wall.hpp"
-#include "Enemy.h"
+#include "Enemy.hpp"
 
 
 using namespace rapidjson;

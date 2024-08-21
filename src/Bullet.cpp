@@ -1,6 +1,6 @@
 #include "Bullet.hpp"
 
-Bullet::Bullet(int xx, int yy, float aangle)
+Bullet::Bullet(int xx, int yy, float aangle, int dmg, int prc)
 {
 	const double PI = 3.14159265358979323846;
 	x = xx;
@@ -9,6 +9,9 @@ Bullet::Bullet(int xx, int yy, float aangle)
 	height = 15;
 	speed = 64 * 14;
 	angle = aangle;
+
+	damage = dmg;
+	pierce = prc;
 
 	std::pair<double, double> newPos = calculatePointInDirection(x, y, angle, speed);
 	dx = newPos.first - x;
@@ -46,7 +49,6 @@ bool Bullet::Update(int px, int py, int w, int h, float dTime, std::vector<Wall>
 	
 	bool ok = false;
 
-	const double PI = 3.14159265358979323846;
 	for (int i = 0; i < Walls.size(); i++)
 		if ((x < (Walls[i].x + Walls[i].width) * Walls[i].TextureWidth &&
 			 x >  Walls[i].x * Walls[i].TextureWidth &&
@@ -89,3 +91,28 @@ bool Bullet::Update(int px, int py, int w, int h, float dTime, std::vector<Wall>
 	return (x < -w / 2 + px + 32 || x > w / 2 + px + 32 ||
 			y < -h / 2 + py + 32 || y > h / 2 + py + 32 || ok);
 }
+
+bool Bullet::isColiding(int xx, int yy, int ww, int hh) const
+{
+	return ((x < xx + ww  &&
+			x >  xx  &&
+			y < yy + hh  &&
+			y >  yy) || 
+			
+			(x + width * cosc < xx + ww &&
+			x + width * cosc > xx &&
+			y + width * sinc < yy + hh &&
+			y + width * sinc >  yy) ||
+
+			(x - height * sinc < xx + ww &&
+			x - height * sinc >  xx &&
+			y + height * cosc < yy + hh &&
+			y + height * cosc >  yy) ||
+
+			(x + width * cosc - height * sinc < xx + ww &&
+			x + width * cosc - height * sinc >  xx &&
+			y + width * sinc + height * cosc < yy + hh &&
+			y + width * sinc + height * cosc >  yy)
+		);
+}
+

@@ -27,6 +27,8 @@ public:
 	float x = 0, y = 0;
 	float width, height;
 
+	int hp;
+
 	sf::Sprite sprite;
 
 	virtual void Start(float ex, float ey);
@@ -34,7 +36,7 @@ public:
 	virtual void Update(std::vector<Wall>& walls, 
 		float& px, float& py, int& pwidth, int& pheight, float dTime);
 
-
+	virtual bool isColiding(int xx, int yy, int ww, int hh);
 
 };
 

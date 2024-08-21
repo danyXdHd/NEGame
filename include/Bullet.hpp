@@ -13,6 +13,9 @@ public:
 	int speed;
 	float angle;
 
+	int damage;
+	int pierce;
+
 	float sinc, cosc;
 
 	sf::Sprite sprite;
@@ -23,5 +26,7 @@ public:
 
 	bool Update(int px, int py, int w, int h, float dTime, std::vector<Wall>& Walls);
 
-	Bullet(int xx, int yy, float aangle);
+	bool isColiding(int xx, int yy, int ww, int hh) const;
+
+	Bullet(int xx, int yy, float aangle, int dmg, int prc);
 };

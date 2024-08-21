@@ -1,23 +1,21 @@
 ﻿#include <Player.hpp>
 
 void Player::Start() {
+	hp = 10;
 	width = 60;
 	height = 60;
 	x = 0;
 	y = 0;
 	speed = 64 * 5;
-	gunAngle = 0;
 	maxBullets = 20;
 	delayBullet = 0;
-	maxDelayBullet = .2;
 
-	
 	LoadTextures();
 }
 
-void Player::Update(sf::RenderWindow& Window, sf::View View, 
+void Player::Update(sf::RenderWindow& Window, sf::View &View, 
 					int width, int height, float dTime, 
-					std::vector<Wall>& Walls) {
+					std::vector<Wall>& Walls, std::vector<Enemy> &Enemys) {
 	// Handle player movement
 	
 	HandleMovement(Walls, dTime);
@@ -27,13 +25,13 @@ void Player::Update(sf::RenderWindow& Window, sf::View View,
 
 	// Draw player
 	Window.draw(sprite);
-	Window.draw(gunSprite);
+	Window.draw(Gun.sprite);
 	View.setCenter(sf::Vector2f(x + Player::width/2, y + Player::height/2));
 	Window.setView(View);
 
 	// Handle bullets
 	HandleBullets(Window, width, height, dTime, Walls);
-
+	HandleDamage(Enemys);
 }
 
 void Player::LoadTextures() {
@@ -52,9 +50,9 @@ void Player::LoadTextures() {
 
 	sprite.setTexture(texture);
 	sprite.setScale(0.5, 0.5);
-	gunSprite.setTexture(gunTexture);
+	Gun.sprite.setTexture(gunTexture);
 
-	gunSprite.setOrigin(sf::Vector2f(width / 4, width / 4));
+	Gun.sprite.setOrigin(sf::Vector2f(width / 4, width / 4));
 }
 
 void Player::HandleMovement(std::vector<Wall>& Walls, float dTime) {
@@ -111,33 +109,50 @@ void Player::HandleGun(sf::RenderWindow& Window) {
 	sf::Vector2i mousePos = sf::Mouse::getPosition(Window);
 	sf::Vector2f worldPos = Window.mapPixelToCoords(mousePos);
 
-	gunAngle = angleWithXAxis(x + width / 2, y + width / 2, worldPos.x, worldPos.y);
+	double gunAngle = angleWithXAxis(x + width / 2, y + width / 2, worldPos.x, worldPos.y);
 
 	if (gunAngle > 90 && gunAngle < 270)
-		gunSprite.setScale(1.f, -1.f);
+		Gun.sprite.setScale(1.f, -1.f);
 	else
-		gunSprite.setScale(1.f, 1.f);
+		Gun.sprite.setScale(1.f, 1.f);
 
-	gunSprite.setRotation(gunAngle);
+	Gun.sprite.setRotation(gunAngle);
 	std::pair<double, double> newPos = calculatePointInDirection(x + width / 2, y + width / 2, gunAngle, width / 2);
-	gunSprite.setPosition(newPos.first, newPos.second);
+	Gun.sprite.setPosition(newPos.first, newPos.second);
+}
+
+void Player::HandleDamage(std::vector<Enemy> &Enemys)
+{
+	int n = Enemys.size();
+	for (int j = 0; j < n; j++) {
+		// Colision between player`s bullets and the enemys
+		int m = Bullets.size();
+		for (int i = 0; i < m ; i++) {
+			if (Bullets[i].isColiding(Enemys[j].x, Enemys[j].y, 
+				Enemys[j].width, Enemys[j].height)) 
+			{
+				Enemys[j].hp -= Bullets[i].damage;
+				if (Enemys[j].hp <= 0) {
+					Enemys.erase(Enemys.begin() + j);
+				}
+				Bullets[i].pierce--;
+				if (Bullets[i].pierce <= 0) {
+					Bullets.erase(Bullets.begin() + i);
+				}
+			}
+		}
+		// Colision between enemy`s bullets and the player
+	}
 }
 
 void Player::HandleBullets(sf::RenderWindow& Window, int width, int height, float dTime, std::vector<Wall>& Walls)
 {
 	if(Bullets.size() < maxBullets && delayBullet <= 0)
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-			Bullet newBullet(gunSprite.getPosition().x, gunSprite.getPosition().y,
-							 gunSprite.getRotation());
+			Gun.Shoot(Bullets , bulletTexture, Gun.sprite.getPosition().x,
+				Gun.sprite.getPosition().y, Gun.sprite.getRotation());
 
-			Player::Bullets.push_back(newBullet);
-			int i = Bullets.size() - 1;
-			//Bullets[i].sprite.setOrigin(sf::Vector2f(Bullets[i].width/2, Bullets[i].height/2));
-			Bullets[i].sprite.setRotation(gunSprite.getRotation());
-			Bullets[i].sprite.setTexture(bulletTexture);
-			Bullets[i].sprite.setPosition(Bullets[i].x, Bullets[i].y);
-
-			delayBullet = maxDelayBullet;
+			delayBullet = Gun.maxDelayBullet;
 		}
 	if (delayBullet > 0)
 		delayBullet -= dTime;

@@ -1,7 +1,8 @@
-#include "Enemy.h"
+#include "Enemy.hpp"
 
 void Enemy::Start(float ex, float ey)
 {
+	hp = 3;
 	speed = 64 * 4;
 	x = ex;
 	y = ey;
@@ -44,6 +45,14 @@ void Enemy::HandleMovement(std::vector<Wall>& Walls,
 
 		sprite.setPosition(x, y);
 	}
+}
+
+bool Enemy::isColiding(int xx, int yy, int ww, int hh)
+{
+	return (x < xx + ww &&
+		x + width> xx &&
+		y < yy + hh &&
+		y + height > yy);
 }
 
 void Enemy::HandleBullets(sf::RenderWindow& Window, int width, int height, float dTime, std::vector<Wall>& Walls)

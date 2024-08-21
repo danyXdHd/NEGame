@@ -39,6 +39,9 @@
     <ClCompile Include="src\Enemy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Gun.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Application.hpp">
@@ -59,7 +62,10 @@
     <ClInclude Include="include\Wall.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Enemy.h">
+    <ClInclude Include="include\Enemy.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Gun.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
