@@ -180,8 +180,9 @@ bool Scene::Update(sf::RenderWindow& Window,
         Window.draw(Doors[i].sprite);
     }
     for (int i = 0; i < Enemys.size(); i++) {
-        Enemys[i].Update(Walls, x, y, width, height, dTime);
+        Enemys[i].Update(Window, Walls, x, y, width, height, dTime, bulletTexture);
         Window.draw(Enemys[i].sprite);
+        Window.draw(Enemys[i].Gun.sprite);
     }
 
     return loadNextScene;
@@ -195,4 +196,5 @@ void Scene::SpawnEnemy(float ex, float ey)
     Enemys[i].Start(ex, ey);
     Enemys[i].sprite.setTexture(enemyTexture);
     Enemys[i].sprite.setPosition(ex, ey);
+    Enemys[i].Gun.sprite.setTexture(gunTexture);
 }

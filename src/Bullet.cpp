@@ -50,28 +50,12 @@ bool Bullet::Update(int px, int py, int w, int h, float dTime, std::vector<Wall>
 	bool ok = false;
 
 	for (int i = 0; i < Walls.size(); i++)
-		if ((x < (Walls[i].x + Walls[i].width) * Walls[i].TextureWidth &&
-			 x >  Walls[i].x * Walls[i].TextureWidth &&
-			 y < (Walls[i].y + Walls[i].height) * Walls[i].TextureWidth &&
-			 y >  Walls[i].y * Walls[i].TextureWidth) ||
-
-			(x + width * cosc < (Walls[i].x + Walls[i].width) * Walls[i].TextureWidth &&
-			 x + width * cosc >  Walls[i].x * Walls[i].TextureWidth &&
-			 y + width * sinc < (Walls[i].y + Walls[i].height) * Walls[i].TextureWidth &&
-			 y + width * sinc >  Walls[i].y * Walls[i].TextureWidth) ||
-
-			(x - height * sinc < (Walls[i].x + Walls[i].width) * Walls[i].TextureWidth &&
-			 x - height * sinc >  Walls[i].x * Walls[i].TextureWidth &&
-			 y + height * cosc < (Walls[i].y + Walls[i].height) * Walls[i].TextureWidth &&
-			 y + height * cosc >  Walls[i].y * Walls[i].TextureWidth) ||
-
-			(x + width * cosc - height * sinc < (Walls[i].x + Walls[i].width) * Walls[i].TextureWidth &&
-			 x + width * cosc - height * sinc >  Walls[i].x * Walls[i].TextureWidth &&
-			 y + width * sinc + height * cosc < (Walls[i].y + Walls[i].height) * Walls[i].TextureWidth &&
-			 y + width * sinc + height * cosc >  Walls[i].y * Walls[i].TextureWidth)
-			)
-
-		{
+		if (
+			isColiding(Walls[i].x * Walls[i].TextureWidth,
+				Walls[i].y * Walls[i].TextureHeight,
+				Walls[i].width * Walls[i].TextureWidth,
+				Walls[i].height * Walls[i].TextureHeight)
+		) {
 			ok = true;
 			break;
 		}

@@ -40,7 +40,7 @@ void Application::Update()
     s += deltaTime.asSeconds();
     Count++;
     if (s > 0.5) {
-        //std::cout << "FPS: " << 1 / s * Count<< "  DeltaTime:" << deltaTime.asSeconds() << "\n";
+        std::cout << "FPS: " << 1 / s * Count<< "  DeltaTime:" << deltaTime.asSeconds() << "\n";
         s = 0;
         Count = 0;
     }

@@ -4,7 +4,6 @@
 #include "SFML/Graphics.hpp"
 #include "Gun.hpp"
 #include "Enemy.hpp"
-#include "Bullet.hpp"
 #include "Wall.hpp"
 
 class Player

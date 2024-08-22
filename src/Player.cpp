@@ -10,6 +10,8 @@ void Player::Start() {
 	maxBullets = 20;
 	delayBullet = 0;
 
+	Gun.Start();
+
 	LoadTextures();
 }
 
@@ -109,28 +111,20 @@ void Player::HandleGun(sf::RenderWindow& Window) {
 	sf::Vector2i mousePos = sf::Mouse::getPosition(Window);
 	sf::Vector2f worldPos = Window.mapPixelToCoords(mousePos);
 
-	double gunAngle = angleWithXAxis(x + width / 2, y + width / 2, worldPos.x, worldPos.y);
-
-	if (gunAngle > 90 && gunAngle < 270)
-		Gun.sprite.setScale(1.f, -1.f);
-	else
-		Gun.sprite.setScale(1.f, 1.f);
-
-	Gun.sprite.setRotation(gunAngle);
-	std::pair<double, double> newPos = calculatePointInDirection(x + width / 2, y + width / 2, gunAngle, width / 2);
-	Gun.sprite.setPosition(newPos.first, newPos.second);
+	Gun.HandleAngle(x, y, width, height, angleWithXAxis(
+		x + width / 2, y + width / 2, worldPos.x, worldPos.y));
 }
 
 void Player::HandleDamage(std::vector<Enemy> &Enemys)
 {
-	int n = Enemys.size();
-	for (int j = 0; j < n; j++) {
+	for (int j = 0; j < Enemys.size(); j++) {
 		// Colision between player`s bullets and the enemys
-		int m = Bullets.size();
-		for (int i = 0; i < m ; i++) {
+		for (int i = 0; i < Bullets.size(); i++) {
 			if (Bullets[i].isColiding(Enemys[j].x, Enemys[j].y, 
-				Enemys[j].width, Enemys[j].height)) 
+				Enemys[j].width, Enemys[j].height) && 
+				Enemys[j].iFrame <= 0)
 			{
+				Enemys[j].iFrame = Enemys[j].maxIFrame;
 				Enemys[j].hp -= Bullets[i].damage;
 				if (Enemys[j].hp <= 0) {
 					Enemys.erase(Enemys.begin() + j);
